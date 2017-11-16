@@ -10,16 +10,11 @@ function y = arith_encode_base_n(x, p, alphabet)
 %precision = 32*8;
 
 one = bitcmp(uint64(0)); % this is max_integer
-% create vectors of fractional values
-fracs = uint64(zeros(256,1));
-fracs(1) = ceil(one / 256);
-for i = 1:255
-    fracs(i) = fracs(1) * i;
-end
-fracs(256) = one;
+int_size = ceil(one / 256);
 
-%create mask for first 8bits
+% create mask for first 8bits
 mask = @(x) bitand(bitcmp(bitshift(bitcmp(uint64(0)),-8)),x);
+% returns integer value corresponding to first 8 bits of uint64
 interval = @(x) uint8((bitshift(mask(x), -56)));
 
 % check input symbols
@@ -47,29 +42,19 @@ straddle = ([]);
 
 
 % MAIN ENCODING ROUTINE
-for k = 1:length(x) % for every input symbol
-    k
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %   PLEASE COMPLETE NUMBERED STEPS BELOW AS INSTRUCTED          %
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    % 1) calculate the interval range to be the difference between hi and lo + 1
-    % The +1 is necessary to avoid rounding issues
+% Loop over input
+for k = 1:length(x)
+    % Calculate interval range
     range = hi - lo + uint64(1);
     
-    % The following command finds the index of the next input symbols in
-    % the cumulative probability distribution f
+    % Find index of input symbol
     ind = find(alphabet == x(k)); 
 
-    % 2) narrow the interval end-points [lo,hi) to the new range [f,f+p]
-    % within the old interval [lo,hi], being careful to round 'innwards' so
-    % the code remains prefix-free (you want to use the functions ceil and
-    % floor). This will require two instructions
-    %
-    lo = lo + uint64(range * f(ind)) + uint64(1); %multiplying uint64 by decimal automatically rounds down
+    % Narrow interval range (inwards)
+    % N.B. multiplying uint64 by decimal automatically rounds down
+    lo = lo + uint64(range * f(ind)) + uint64(1); 
     hi = lo + range * p(ind);
     
-    % reset lo_master and hi_master
     straddle = [];
     % check that the interval has not narrowed to 0
     if (hi == lo)
@@ -82,26 +67,18 @@ for k = 1:length(x) % for every input symbol
        % disp(['Interval gap = ' num2str(interval(hi) - interval(lo))])
         if mask(hi) == mask(lo)
             % if first 8 bits the same then the current interval lies perfectly
-            % between a recip-256 interval
+            % between a n-ic interval
             if isempty(straddle)
-                %disp(['NO STRADDLE: lo = ' num2str(lo) ' with interval ' num2str(interval(lo))])
-                %disp(['Low interval = ' num2str(interval(lo)) ' next interval = ' num2str(interval(bitshift(lo, 8)))])
-                
-                y = [y, interval(bitshift(lo, 8))];
-                hi = hi - mask(hi);
-                lo = lo - mask(lo);
+                y = [y, interval(lo)];
             else
                 strad_comp = [straddle(2:length(straddle)), interval(lo)];
                 strad_comp = uint8((strad_comp > (255 - straddle)));
                 straddle = straddle + strad_comp;
-%                 disp(['Number of zeros in straddle = ' num2str(sum(straddle == 0))])
-                %disp(['lo = ' num2str(lo) ' with interval ' num2str(interval(lo))])
-                %y = [y, straddle, interval(lo)];
-                y = [y, straddle];
-                hi = hi - mask(hi);
-                lo = lo - mask(lo);
+                y = [y, straddle, interval(lo)];
                 straddle = [];
             end
+            hi = hi - mask(hi);
+            lo = lo - mask(lo);
         elseif interval(hi) - interval(lo) > 2
             % need to include more symbols
             % to narrow down probability range enough to assign a value
@@ -109,7 +86,7 @@ for k = 1:length(x) % for every input symbol
         else
             %the probability interval straddles either side of
             %interval(lo) + 1 (= interval(hi))
-            if interval(hi - lo) == 1
+            if (hi - lo) > int_size
                 %it straddles, but cannot narrow down this range without
                 %including another symbol
                 break;
@@ -117,19 +94,12 @@ for k = 1:length(x) % for every input symbol
                 lo_shift = interval(bitshift(lo,8));
                 straddle = [straddle, lo_shift];
 
-                lo = lo - uint64(lo_shift)*fracs(1);
-                hi = hi - uint64(lo_shift)*fracs(1);
+                lo = lo - uint64(lo_shift)*int_size;
+                hi = hi - uint64(lo_shift)*int_size;
             end
         end    
         
-        % 7) now multiply the interval end-points by 256 (the -1/2 or -1/4
-        % operations have already been performed if appropriate, so the
-        % interval is now in all cases within [0,1/256] and can simply be
-        % multiplied by 2 to stretch to [0,1]. ADD 1 TO THE HI END-POINT
-        % AFTER MULTIPLYING. THIS ENSURES THAT A 1 BIT IS PIPELINED INTO
-        % THE HI BOUND AND WILL HELP AVOID UNDERFLOW/OVERFLOW.
-        % 
-        %disp(['Lo interval is ' num2str(interval(lo)) ' and gap is ' num2str(interval(hi) - interval(lo))]);
+        %Rescale interval
         hi = 256*hi + 1;
         lo = 256*lo;
     end
