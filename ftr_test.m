@@ -7,21 +7,25 @@ p = hist(hamlet, 0:255);
 p = p/sum(p);
 
 %% ARITHMETIC CODE
-hamlet_bin = arith_encode_base_n(hamlet, p);
+%hamlet_bin = arith_encode(hamlet, p);
+hamlet_bin_n = arith_encode_n(hamlet, p, 256);
+%comp = (hamlet_bin ~= hamlet_bin_n);
+%find(hamlet_bin_n == 0,1)
+hamlet_decoded = arith_decode_n(hamlet_bin_n, p,256, length(hamlet));
+char(hamlet_decoded(1:500))
 
+%% TRIVIAL TEST
+% p = [0.2 0.5 0.3];
+% alphabet = ['A' 'B' 'C'];
+% input = ['A' 'B' 'A' 'C' 'A' 'B' 'C'];
+% base = 2;
+% 
+% encoded = arith_encode(input, p, alphabet);
+% decoded = arith_decode(encoded, p, length(input),  alphabet);
+% 
+% encoded_n = arith_encode_n(input, p, base,  alphabet);
+% decoded_n = arith_decode_n(encoded, p, base, length(input), alphabet);
+% encoded_n == encoded
+% %decoded_n == decoded
 
-%% ENCODING
-%fprintf(['\nCHECK: Hamlet bin length = ' num2str(length(hamlet_bin)) ' \n\n'])
-
-%hamlet_cz1 = bits2bytes(hamlet_bin);
-%fprintf(['Compressed length is ' num2str(length(hamlet_cz1))]);
-%R_cz1 = length(hamlet_cz1)/length(hamlet);
-%fprintf(['\nThis corresponds to a compression rate of R = ' num2str(round(R_cz1,7))]);
-%fprintf(['\nCompressed bits per byte = ' num2str(round(8*R_cz1,7)) '\n']);
-
-%fprintf(['\nThe entropy of the distribution is ' num2str(round(H(p),7)) ' - this is also a lower bound.\n'])
-
-%% DECODING
-%hamlet_decoded = arith_decode(hamlet_bin, p,length(hamlet_bin));
-%char(hamlet_decoded(1:500))
 
