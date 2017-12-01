@@ -8,10 +8,11 @@ p = p/sum(p);
 
 %% ARITHMETIC CODE
 %hamlet_bin = arith_encode(hamlet, p);
-hamlet_bin_n = arith_encode_n(hamlet, p, 256);
+base = 2^16 - 1;
+hamlet_bin_n = arith_encode_n(hamlet, p, base);
 %comp = (hamlet_bin ~= hamlet_bin_n);
 %find(hamlet_bin_n == 0,1)
-hamlet_decoded = arith_decode_n(hamlet_bin_n, p,256, length(hamlet));
+hamlet_decoded = arith_decode_n(hamlet_bin_n, p,base, length(hamlet));
 char(hamlet_decoded(1:500))
 
 %% TRIVIAL TEST
