@@ -1,7 +1,9 @@
 function y = arith_encode_n(x, p, n, alphabet)
 
-precision = 32;
-one = 2^precision-1;
+log_n = log(n)/log(2);
+
+precision = floor(32/log_n);
+one = n^precision - 1;
 divider = ceil(one/n);
 divider2 = ceil(one/n^2);
 %divider = n*divider2;

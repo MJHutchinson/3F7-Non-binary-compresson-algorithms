@@ -1,7 +1,9 @@
 function y = arith_decode_n(x, p, n, ny, alphabet)
 
-precision = 32;
-one = 2^precision-1;
+log_n = log(n)/log(2);
+
+precision = floor(32/log_n);
+one = n^precision - 1;
 divider = ceil(one/n);
 divider2 = ceil(one/n^2);
 
@@ -25,13 +27,11 @@ y = zeros(1,ny);
 
 nary2dec = @(x,n) dot(x, n.^((length(x) - 1:-1:0)));
 
-precision_n = ceil(precision*log(2)/log(n));
-
 hi = one;
 lo = 0;
-x = [x(:)' zeros(1,precision_n+1)]; % make row vector and add dummy zeros
-value = nary2dec(x(1:precision_n), n); % target value for interval
-xp = precision_n + 1; % pointer to next symbol in the input pipeline
+x = [x(:)' zeros(1,precision+1)]; % make row vector and add dummy zeros
+value = nary2dec(x(1:precision), n); % target value for interval
+xp = precision + 1; % pointer to next symbol in the input pipeline
 
 
 for k = 1:ny
@@ -77,7 +77,6 @@ for k = 1:ny
         
         xp = xp+1;
         if (xp == length(x))
-            char(y(1:2000))
             error('Unable to decompress');
         end
     end
