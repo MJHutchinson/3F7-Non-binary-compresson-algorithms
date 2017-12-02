@@ -27,12 +27,12 @@ for b_id = 1:length(bases)
         encoded = arith_encode_n(in, p, bases(b_id));
         
         % time encoder
-        disp(['Timing encoder for base ' num2str(bases(b_id))]);
+        %disp(['Timing encoder for base ' num2str(bases(b_id))]);
         func = @() arith_encode_n(in, p, bases(b_id));
         times(b_id,2) = timeit(func);
         
         % time decoder
-        disp(['Timing decoder for base ' num2str(bases(b_id))]);
+        %disp(['Timing decoder for base ' num2str(bases(b_id))]);
         func = @() arith_decode_n(encoded, p, bases(b_id), length(in));
         times(b_id,3) = timeit(func);
     catch

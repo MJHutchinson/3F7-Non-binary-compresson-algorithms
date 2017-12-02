@@ -1,14 +1,15 @@
 %% LOAD IN FILE
-fid = fopen('test_files/hamlet.txt','r');
+file = 'test_files/canterbury/ptt5';
+fid = fopen(file,'r');
 hamlet = fread(fid)';
 fclose(fid);
 %% HISTOGRAM OF TEXT
 p = hist(hamlet, 0:255);
 p = p/sum(p);
 
-%% ARITHMETIC CODE
+%% ARITHMETIC CODEfg
 %hamlet_bin = arith_encode(hamlet, p);
-base = 2;
+base = 873291;
 hamlet_bin_n = arith_encode_n(hamlet, p, base);
 %comp = (hamlet_bin ~= hamlet_bin_n);
 %find(hamlet_bin_n == 0,1)
