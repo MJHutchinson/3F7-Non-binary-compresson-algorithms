@@ -1,8 +1,7 @@
 function y = arith_encode_n(x, p, n, alphabet)
-
 log_n = log(n)/log(2);
 
-precision = floor(32/log_n);
+precision = floor(48/log_n);
 one = n^precision - 1;
 divider = ceil(one/n);
 divider2 = ceil(one/n^2);
@@ -67,7 +66,7 @@ for k = 1:length(x) % for every input symbol
             hi = hi - a * divider; % take off the nearest below quater step to rescale
             lo = lo - a * divider;
             
-        elseif ceil(lo/divider2) == floor(hi/divider2)
+        elseif ceil(lo/divider) == floor(hi/divider)
             bottom = [bottom 0];
             
             a2 = floor(lo/divider2);

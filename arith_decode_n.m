@@ -2,7 +2,7 @@ function y = arith_decode_n(x, p, n, ny, alphabet)
 
 log_n = log(n)/log(2);
 
-precision = floor(32/log_n);
+precision = floor(48/log_n);
 one = n^precision - 1;
 divider = ceil(one/n);
 divider2 = ceil(one/n^2);
@@ -60,7 +60,7 @@ for k = 1:ny
             lo = lo - a * divider;
             value = value - a*divider;
             
-        elseif ceil(lo/divider2) == floor(hi/divider2)
+        elseif ceil(lo/divider) == floor(hi/divider)
             a2 = floor(lo/divider2);
             
             % take off the nearest below sixteenth step to rescale
