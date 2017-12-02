@@ -66,7 +66,7 @@ for k = 1:length(x) % for every input symbol
             hi = hi - a * divider; % take off the nearest below quater step to rescale
             lo = lo - a * divider;
             
-        elseif ceil(lo/divider2) == floor(hi/divider2)
+        elseif ceil(lo/divider) == floor(hi/divider)
             bottom = [bottom 0];
             
             a2 = floor(lo/divider2);

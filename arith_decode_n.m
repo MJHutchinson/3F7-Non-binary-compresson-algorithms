@@ -60,7 +60,7 @@ for k = 1:ny
             lo = lo - a * divider;
             value = value - a*divider;
             
-        elseif ceil(lo/divider2) == floor(hi/divider2)
+        elseif ceil(lo/divider) == floor(hi/divider)
             a2 = floor(lo/divider2);
             
             % take off the nearest below sixteenth step to rescale
