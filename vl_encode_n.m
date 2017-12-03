@@ -19,7 +19,7 @@ if (size(c,1) ~= length(cl))
     error('Code table and code lengths have inconsistent dimensions.');
 end
 
-if (nargin == 4)
+if (nargin == 5)
     if (~isempty(setdiff(unique(x), alphabet)))
         error('There are symbols in data that are not in alphabet.');
     end
