@@ -1,5 +1,5 @@
 function [c, cl] = huffman_n(p, base)
-% huffman(p) implements the Huffman algorithm to determine the optimal
+% huffman(p, n) implements the Huffman algorithm to determine the optimal
 % prefix-free code for a random variable with probability distribution p.
 % The input vector p must consist of non-negative numbers that sum to 1.
 % The output is a tree in matrix form, each row is a node in the tree and
@@ -7,7 +7,8 @@ function [c, cl] = huffman_n(p, base)
 % nodes are leaves (corresponding to the source alphabet) and the last node
 % in the list is the root.
 %
-% Copyright Jossy Sayir, 2016
+% Modified from the FTR files provided by Jossy Sayir by Basil Mustafa and
+% Michael Hutchinson, 2017
 
 nz =find(p); % for now provide codewords only for non-zero probabilities
 p_orig = p; % (we will introduce zero-length codewords for other symbols
@@ -23,16 +24,22 @@ p = p(nz); % at the end)
 
 % get length of input probability vector
 n = length(p);
+n_orig = n;
 
 % replace the probability vector by a matrix with probabilities in its left
 % column and the index of the corresponding tree nodes on the right
 p = [p(:) (1:n)'];
 
+% in order to ensure a fully bound tree, dummy symbols with zero
+% probability must be added until (symbols)mod(base - 1) == 1. This need
+% not be done in base 2
 dummies = 0;
-while mod(n, base-1) ~= 1 && base ~= 2
-   p = [p ; 0 n+1];
-   n = length(p);
-   dummies = dummies + 1;
+if base ~= 2
+    while mod(n, base-1) ~= 1
+       p = [p ; 0 n+1];
+       n = length(p);
+       dummies = dummies + 1;
+    end
 end
 
 % initialise tree to the all-zero vector of length n, i.e.,
@@ -65,6 +72,9 @@ while (size(p,1) > 1) % while there are at least 2 probs in the list
     t = [t  0];
     p_cum = 0;
     
+    % determine how many nodes to connect in this iteration of the
+    % algorithm. If less than base nodes left, connect those together, else
+    % connect the next base nodes together with the smallest probabilities.
     j = 0;
     if(base > length(p))
         j = length(p);
@@ -72,23 +82,31 @@ while (size(p,1) > 1) % while there are at least 2 probs in the list
         j = base;
     end
     
+    % sum the probabilities of the nodes connected together in this step
+    % and connect them to the parent node.
     for i=1:j
        p_cum = p_cum + p(i,1);
        t(p(i,2)) = length(t); 
     end
     
+    % remove the nodes connected together on this iteration together
     for i=1:(j-1)
        p(1,:) = []; 
     end
     
+    % add a new node to the list with probability the sum of its children
+    % at the correct location in the tree
     p(1,:) = [ p_cum length(t) ];
 end
 
+% if dummy nodes were added to the code, remove them and readjust the tree
+% to reflect this
 if dummies ~= 0
-   t(length(p_orig)+1:length(p_orig)+dummies) = [];
+   t(n_orig+1:n_orig+dummies) = [];
    t(1:length(t)-1) = t(1:length(t)-1) - dummies;
 end
 
+% convert the tree to a code
 [c_nz,cl_nz] = tree2code_n(t);
 
 % now introduce zero length codewords for zero probability symbols
