@@ -9,7 +9,7 @@ p = p/sum(p);
 
 %% ARITHMETIC CODEfg
 %hamlet_bin = arith_encode(hamlet, p);
-base = 873291;
+base = 2;
 hamlet_bin_n = arith_encode_n(hamlet, p, base);
 %comp = (hamlet_bin ~= hamlet_bin_n);
 %find(hamlet_bin_n == 0,1)
