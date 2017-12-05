@@ -4,7 +4,8 @@ function xt = code2xtree_n(c, cl, base)
 % extended tree representation of the prefix-free code where every node
 % points to its parent and child(ren) node(s).
 %
-% Copyright Jossy, 2016
+% Modified from the FTR files provided by Jossy Sayir by Basil Mustafa and
+% Michael Hutchinson, 2017
 
 xt = zeros(base+1,1); % root
 

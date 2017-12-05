@@ -1,4 +1,6 @@
 function y = arith_decode_n(x, p, n, ny, alphabet)
+% Modified from the FTR files provided by Jossy Sayir by Basil Mustafa and
+% Michael Hutchinson, 2017
 
 log_n = log(n)/log(2);
 

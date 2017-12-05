@@ -1,4 +1,7 @@
 function y = arith_encode_n(x, p, n, alphabet)
+% Modified from the FTR files provided by Jossy Sayir by Basil Mustafa and
+% Michael Hutchinson, 2017
+
 log_n = log(n)/log(2);
 
 precision = floor(48/log_n);

@@ -2,7 +2,8 @@ function [c, cl] =tree2code_n(t)
 % tree2code(t) converts a varialble length prefix-free code from tree
 % notation to code notation (list of codewords and list of lengths).
 %
-% Copyright Jossy, 2016
+% Modified from the FTR files provided by Jossy Sayir by Basil Mustafa and
+% Michael Hutchinson, 2017
 
 assert(nargin == 1);
 
