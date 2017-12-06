@@ -1,5 +1,6 @@
 N = 10000;
 
+
 bases = [2:16 2.^(2:0.5:16)];
 
 bases = sort(unique(floor(bases)));

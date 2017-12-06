@@ -10,6 +10,7 @@ function [c, cl] = huffman_n(p, base)
 % Modified from the FTR files provided by Jossy Sayir by Basil Mustafa and
 % Michael Hutchinson, 2017
 
+
 nz =find(p); % for now provide codewords only for non-zero probabilities
 p_orig = p; % (we will introduce zero-length codewords for other symbols
 p = p(nz); % at the end)
